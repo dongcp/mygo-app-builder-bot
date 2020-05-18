@@ -6,7 +6,7 @@ const app = express();
 const TELEGRAM_BASE_URL = "https://api.telegram.org/";
 const TELEGRAM_BOT_TOKEN = "860581299:AAEH_YXKAMACqS3Xx291uwOi75BzXYU6hIs";
 
-const PRIVATE_CHAT_ID = '520305610';
+const PRIVATE_CHAT_ID = '-1001490997604';
 const GROUP_CHAT_ID = '-1001258719210';
 
 app.use(bodyParser.json());
@@ -21,21 +21,21 @@ app.post('/start_bot', function(req, res) {
 
   console.log(message)
 
-  sendMessage("Hello");
+  sendMessage("Hello", res);
 
   res.end();
 });
 
-function sendMessage(content) {
+function sendMessage(content, res) {
   axios.post(
     TELEGRAM_BASE_URL + "/bot" + TELEGRAM_BOT_TOKEN + "/sendMessage",
     {
       chat_id: PRIVATE_CHAT_ID,
       text: content 
     }
-  ).then (res => {
+  ).then (response => {
       console.log("CheckHang")
-      res.end("ok");
+      res.status(200).send(response);
   }).catch (error=> {
     console.log(error)
   })
