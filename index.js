@@ -20,6 +20,10 @@ app.post('/start_bot', function(req, res) {
   const {message} = req.body
 
   console.log(message)
+
+  sendMessage("Hello");
+
+  res.end();
 });
 
 function sendMessage(content) {
@@ -29,9 +33,9 @@ function sendMessage(content) {
       chat_id: PRIVATE_CHAT_ID,
       text: content 
     }
-  ).then (response => {
+  ).then (res => {
       console.log("CheckHang")
-
+      res.end("ok");
   }).catch (error=> {
     console.log(error)
   })
