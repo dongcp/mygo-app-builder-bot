@@ -1,6 +1,5 @@
 const express = require('express');
 const axios = require('axios');
-const bodyParser = require('body-parser');
 const app = express();
 
 const TELEGRAM_BASE_URL = "https://api.telegram.org/bot";
@@ -16,7 +15,7 @@ const DONG_USERNAME = "DongCP";
 
 const GREETINGS = ["chào", "xin chào", "hi", "hello", "hey boy"]
 
-app.use(bodyParser.json());
+app.use(express.json());
 
 app.post('/', function(req, res) {
   if(req.body.app_name) {
