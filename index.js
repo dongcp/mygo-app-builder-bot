@@ -7,6 +7,7 @@ const TELEGRAM_BASE_URL = "https://api.telegram.org/bot";
 const TELEGRAM_BOT_TOKEN = "860581299:AAEH_YXKAMACqS3Xx291uwOi75BzXYU6hIs";
 
 const GROUP_CHAT_ID = -1001258719210;
+const PRIVATE_CHAT_ID = 520305610;
 
 const TUANH_USERNAME = "anhntt8";
 const GIANG_USERNAME = "GiangTrantt";
@@ -18,10 +19,13 @@ const GREETINGS = ["chào", "xin chào", "hi", "hello", "hey boy"]
 app.use(bodyParser.json());
 
 app.post('/', function(req, res) {
-  const {message} = req.body
+  if(req.body.app_name) {
+    console.log(req);
+    handleAppCenterMessage(req.body, res);
+    return
+  }
 
-  console.log(message)
-
+  const {message} = req.body;
   if(message.text.includes("@app_builder_bot")) {
     const realContent = message.text.substring(17).trim().toLowerCase();
 
@@ -30,6 +34,31 @@ app.post('/', function(req, res) {
     }
   }
 });
+
+function handleAppCenterMessage(message, res) {
+  const appName = message.app_name;
+  const versionName = message.short_version;
+  const releaseNoteContent = message.release_notes.replace("# Nội dung thay đổi","");
+  const installLink = message.install_link;
+
+  const releaseNotes = releaseNoteContent.split('\n');
+
+  var content = "-----------------THÔNG BÁO-----------------";
+  content = content + "\nỨng dụng " + appName + " đã có bản build mới trên appcenter.";
+  content = content + "\nThông tin bản build:";
+  content = content + "\n    + Phiên bản: " + versionName;
+  if(releaseNotes && releaseNotes.length > 0) {
+    content = content + "\n    + Nội dung cập nhật:";
+    releaseNotes.forEach(note => {
+      if(note && note.trim() != "") {
+        content = content + "\n        " + note.trim()
+      }
+    });
+  }
+  content = content + "\n    + Đường dẫn tải về: " + installLink;
+
+  sendMessage(content, res, -1)
+}
 
 function sayHello(messageId, username, res) {
   var message = "Xin chào! Tôi có thể giúp gì cho bạn?";
@@ -49,7 +78,7 @@ function sayHello(messageId, username, res) {
 
 function sendMessage(content, res, messageId) {
   var body = {
-    chat_id: GROUP_CHAT_ID,
+    chat_id: PRIVATE_CHAT_ID,
     text: content
   }
   if(messageId != -1) {
