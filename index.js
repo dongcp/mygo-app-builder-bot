@@ -97,6 +97,6 @@ function sendMessage(content, res, messageId) {
   })
 }
 
-app.listen(8443, () => {
+app.listen(process.env.PORT || 8443, () => {
   console.log("Telegram bot is listening on port 8443!")
 });
