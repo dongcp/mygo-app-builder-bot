@@ -81,12 +81,12 @@ function sendMessage(content, res, messageId) {
     chat_id: PRIVATE_CHAT_ID,
     text: content
   }
-  if(messageId != -1) {
-    body = {
-      ...body,
-      reply_to_message_id: messageId
-    }
-  }
+  // if(messageId != -1) {
+  //   body = {
+  //     ...body,
+  //     reply_to_message_id: messageId
+  //   }
+  // }
 
   axios.post(
     TELEGRAM_BASE_URL + TELEGRAM_BOT_TOKEN + "/sendMessage", body
