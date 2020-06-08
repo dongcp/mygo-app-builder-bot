@@ -78,7 +78,7 @@ function sayHello(messageId, username, res) {
 
 function sendMessage(content, res, messageId) {
   var body = {
-    chat_id: PRIVATE_CHAT_ID,
+    chat_id: GROUP_CHAT_ID,
     text: content
   }
   // if(messageId != -1) {
