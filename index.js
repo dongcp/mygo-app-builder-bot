@@ -25,7 +25,7 @@ app.post('/', function(req, res) {
   }
 
   const {message} = req.body;
-  if(message.text.includes("@jeivi_bot")) {
+  if(message.text && message.text.includes("@jeivi_bot")) {
     const realContent = message.text.substring("@jeivi_bot".length).trim().toLowerCase();
 
     var chatId = -1;
