@@ -4,9 +4,9 @@ const bodyParser = require('body-parser')
 const app = express();
 
 const TELEGRAM_BASE_URL = "https://api.telegram.org/bot";
-const TELEGRAM_BOT_TOKEN = "860581299:AAEH_YXKAMACqS3Xx291uwOi75BzXYU6hIs";
 
-const GROUP_CHAT_ID = -1001258719210;
+const ANDROID_GROUP_CHAT_ID = -1001258719210;
+const IOS_GROUP_CHAT_ID = -344994707;
 const PRIVATE_CHAT_ID = 520305610;
 
 const TUANH_USERNAME = "anhntt8";
@@ -20,17 +20,21 @@ app.use(bodyParser.json());
 
 app.post('/', function(req, res) {
   if(req.body.app_name) {
-    console.log(req);
     handleAppCenterMessage(req.body, res);
     return
   }
 
   const {message} = req.body;
-  if(message.text.includes("@app_builder_bot")) {
-    const realContent = message.text.substring(17).trim().toLowerCase();
+  if(message.text.includes("@jeivi_bot")) {
+    const realContent = message.text.substring("@jeivi_bot".length).trim().toLowerCase();
+
+    var chatId = -1;
+    if(message.chat) {
+      chatId = message.chat.id;
+    }
 
     if(GREETINGS.includes(realContent)) {
-      sayHello(message.message_id, message.from.username, res);
+      sayHello(chatId, message.message_id, message.from.username, res);
     }
   }
 });
@@ -40,6 +44,10 @@ function handleAppCenterMessage(message, res) {
   const versionName = message.short_version;
   const releaseNoteContent = message.release_notes.replace("# Nội dung thay đổi","");
   const installLink = message.install_link;
+  const chatId = ANDROID_GROUP_CHAT_ID;
+  if(message.platform != "Android") {
+    chatId = IOS_GROUP_CHAT_ID;
+  }
 
   const releaseNotes = releaseNoteContent.split('\n');
 
@@ -57,10 +65,10 @@ function handleAppCenterMessage(message, res) {
   }
   content = content + "\n    + Đường dẫn tải về: " + installLink;
 
-  sendMessage(content, res, -1)
+  sendMessage(content, res, -1, chatId)
 }
 
-function sayHello(messageId, username, res) {
+function sayHello(chatId, messageId, username, res) {
   var message = "Xin chào! Tôi có thể giúp gì cho bạn?";
 
   if(username === TUANH_USERNAME) {
@@ -73,12 +81,12 @@ function sayHello(messageId, username, res) {
     message = "Hello boss! Is there something I can do for you?"
   }
 
-  sendMessage(message, res, messageId);
+  sendMessage(message, res, messageId, chatId);
 }
 
-function sendMessage(content, res, messageId) {
+function sendMessage(content, res, messageId, chatId) {
   var body = {
-    chat_id: GROUP_CHAT_ID,
+    chat_id: chatId,
     text: content
   }
   // if(messageId != -1) {
@@ -88,9 +96,10 @@ function sendMessage(content, res, messageId) {
   //   }
   // }
 
-  axios.post(
-    TELEGRAM_BASE_URL + TELEGRAM_BOT_TOKEN + "/sendMessage", body
-  ).then ((response) => {
+  const url = TELEGRAM_BASE_URL + process.env.BOT_TOKEN + "/sendMessage";
+
+  axios.post(url, body)
+  .then ((response) => {
       console.log(response.data);
       res.status(200).send(response.data);
   }).catch ((error)=> {
