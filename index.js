@@ -44,7 +44,8 @@ function handleAppCenterMessage(message, res) {
   const versionName = message.short_version;
   const releaseNoteContent = message.release_notes.replace("# Nội dung thay đổi","");
   const installLink = message.install_link;
-  const chatId = ANDROID_GROUP_CHAT_ID;
+  var chatId = ANDROID_GROUP_CHAT_ID;
+
   if(message.platform != "Android") {
     chatId = IOS_GROUP_CHAT_ID;
   }
